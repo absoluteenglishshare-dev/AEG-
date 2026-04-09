@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ABSOLUTE 문장구조</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0a0a0a;--w:#f5f5f5;--red:#e63946;--gold:#f4a261;
+  --g1:#161616;--g2:#222;--g3:#333;--g4:#666;--g5:#aaa;
+  --s:#4cc9f0;--v:#f72585;--o:#f4a261;--c:#7bed9f;--io:#a29bfe;--do:#fd79a8;--oc:#fdcb6e;
+}
+body{background:var(--bg);color:var(--w);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;padding-bottom:48px;}
+
+/* ── SHARED ── */
+.brand{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:6px;}
+.brand em{color:var(--red);font-style:normal;}
+.tagline{font-size:10px;color:var(--g4);letter-spacing:1.5px;font-weight:300;margin-top:2px;}
+.screen{display:none;}
+.screen.on{display:block;}
+
+/* ── HOME ── */
+#home{padding:60px 24px 0;}
+.home-header{text-align:center;margin-bottom:56px;}
+.home-brand{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:8px;}
+.home-brand em{color:var(--red);font-style:normal;}
+.home-tag{font-size:11px;color:var(--g4);letter-spacing:2px;margin-top:6px;}
+.mode-cards{display:flex;flex-direction:column;gap:14px;}
+.mode-card{background:var(--g1);border:1px solid var(--g3);border-radius:20px;padding:28px 24px;cursor:pointer;transition:border-color .2s,background .2s;position:relative;overflow:hidden;}
+.mode-card:active{background:var(--g2);}
+.mode-card.primary{border-color:var(--red);}
+.mode-accent{position:absolute;top:0;right:0;width:80px;height:80px;border-radius:0 20px 0 80px;opacity:.07;}
+.mode-card.primary .mode-accent{background:var(--red);}
+.mode-card.secondary .mode-accent{background:var(--g5);}
+.mode-label{font-size:11px;letter-spacing:2px;color:var(--g4);margin-bottom:8px;font-weight:500;}
+.mode-card.primary .mode-label{color:var(--red);}
+.mode-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;margin-bottom:6px;}
+.mode-desc{font-size:12px;color:var(--g5);line-height:1.6;}
+.mode-arrow{position:absolute;right:24px;bottom:28px;font-size:22px;color:var(--g3);}
+.mode-card.primary .mode-arrow{color:var(--red);}
+
+/* ── PRACTICE / TEST HEADER ── */
+.top-bar{display:flex;align-items:center;gap:12px;padding:20px 20px 0;}
+.back-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--g3);background:transparent;color:var(--w);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.top-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;}
+.top-score{margin-left:auto;font-size:12px;color:var(--g4);}
+
+.form-tabs{display:flex;gap:6px;padding:14px 20px 0;overflow-x:auto;scrollbar-width:none;}
+.form-tabs::-webkit-scrollbar{display:none;}
+.tab{flex:0 0 auto;padding:7px 16px;border-radius:20px;border:1px solid var(--g3);
+  background:transparent;color:var(--g4);font-size:12px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:all .2s;}
+.tab.active{background:var(--red);border-color:var(--red);color:#fff;font-weight:500;}
+
+.prog-wrap{padding:12px 20px 0;}
+.prog-top{display:flex;justify-content:space-between;font-size:11px;color:var(--g4);margin-bottom:5px;}
+.prog-bar{height:2px;background:var(--g2);border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--red);border-radius:2px;transition:width .4s;}
+
+/* ── CARD ── */
+.card-wrap{padding:14px 20px 0;}
+.card{background:var(--g1);border:1px solid var(--g3);border-radius:18px;padding:20px;}
+.card-meta{font-size:10px;color:var(--g4);letter-spacing:2px;margin-bottom:16px;}
+
+/* sentence */
+.sent-area{display:flex;flex-wrap:wrap;gap:10px 14px;margin-bottom:20px;}
+.wb{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;padding:6px 4px;border-radius:10px;border:1.5px solid transparent;transition:background .15s,border-color .15s;}
+.wb.sel{background:rgba(230,57,70,.12);border-color:rgba(230,57,70,.4);}
+.wb.done-sel{background:rgba(100,100,100,.1);border-color:transparent;cursor:default;}
+.wt{font-size:17px;line-height:1.3;}
+.wl-wrap{height:22px;display:flex;align-items:center;}
+.wl{font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:4px;visibility:hidden;}
+.wl.show{visibility:visible;}
+
+/* role buttons */
+.role-area{margin-bottom:18px;}
+.role-hint{font-size:11px;color:var(--g4);margin-bottom:10px;min-height:16px;}
+.role-hint.active{color:var(--w);}
+.role-btns{display:flex;flex-wrap:wrap;gap:8px;}
+.rb{padding:10px 18px;border-radius:10px;border:none;font-size:13px;font-weight:700;
+  font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:transform .1s;letter-spacing:.5px;}
+.rb:active{transform:scale(.93);}
+.rb.off{opacity:.2;pointer-events:none;}
+.rb.erase{background:transparent!important;border:1px solid var(--g3);color:var(--g5)!important;font-weight:400;}
+
+/* action */
+.act-btns{display:flex;gap:10px;}
+.btn-check{flex:1;padding:14px;background:var(--red);border:none;border-radius:12px;
+  color:#fff;font-size:15px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
+.btn-check:active{opacity:.75;}
+.btn-next{flex:1;padding:14px;background:transparent;border:1px solid var(--g3);border-radius:12px;
+  color:var(--w);font-size:15px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;display:none;}
+
+/* feedback */
+.fb{margin-top:16px;border-radius:14px;overflow:hidden;display:none;}
+.fb-top{display:flex;align-items:center;gap:10px;padding:13px 16px;}
+.fb-icon{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.fb-msg{font-size:12px;line-height:1.6;flex:1;}
+.ans-box{padding:14px 16px;background:var(--g2);border:1px solid var(--g3);border-top:none;border-radius:0 0 14px 14px;}
+.ans-lbl{font-size:10px;color:var(--g4);letter-spacing:1px;margin-bottom:12px;}
+
+/* answer sentence with underlines */
+.ans-sent{display:flex;flex-wrap:wrap;gap:0;margin-bottom:12px;align-items:flex-end;}
+.aw{display:inline-flex;flex-direction:column;align-items:center;gap:4px;margin-right:10px;margin-bottom:4px;}
+.aw-text{font-size:15px;line-height:1.3;}
+.aw-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.5px;}
+.aw-spacer{height:18px;}
+
+/* chunk underline group */
+.chunk-group{display:inline-flex;align-items:flex-end;gap:0;position:relative;margin-right:10px;margin-bottom:4px;}
+.chunk-group .aw{margin-right:6px;margin-bottom:0;}
+.chunk-group .aw:last-child{margin-right:0;}
+.chunk-underline{position:absolute;bottom:-6px;left:0;right:0;height:2px;border-radius:2px;}
+.chunk-label{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;letter-spacing:.5px;white-space:nowrap;}
+.chunk-wrap{position:relative;padding-bottom:24px;margin-right:10px;}
+
+.tr-line{font-size:13px;color:var(--g5);line-height:1.7;padding-top:10px;border-top:1px solid var(--g3);}
+
+/* ── RESULT ── */
+#result{padding:24px 20px;}
+.res-header{text-align:center;margin-bottom:28px;}
+.res-title{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:5px;}
+.res-sub{font-size:11px;color:var(--g4);letter-spacing:1px;margin-top:4px;}
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.sc-card{background:var(--g1);border:1px solid var(--g3);border-radius:12px;padding:14px;}
+.sc-lbl{font-size:10px;color:var(--g4);letter-spacing:1px;margin-bottom:6px;}
+.sc-val{font-size:26px;font-weight:700;}
+.good{color:#7bed9f;}.bad{color:var(--red);}
+.weak-box{background:var(--g1);border:1px solid var(--red);border-radius:14px;padding:16px;margin-bottom:16px;}
+.weak-ttl{font-size:11px;color:var(--red);letter-spacing:1.5px;font-weight:700;margin-bottom:14px;}
+.vrow{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.vform{font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;background:var(--g2);border:1px solid var(--g3);color:var(--g5);letter-spacing:1px;flex-shrink:0;}
+.vwords{font-size:12px;font-weight:500;margin-bottom:2px;}
+.vdesc{font-size:11px;color:var(--g4);}
+.flash-box{background:var(--g1);border:1px solid var(--g3);border-radius:14px;padding:16px;margin-bottom:20px;}
+.flash-ttl{font-size:11px;color:var(--g4);letter-spacing:1px;margin-bottom:12px;}
+.flashcard{background:var(--g2);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;min-height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1px solid var(--g3);}
+.flashcard:active{background:var(--g3);}
+.fw{font-size:19px;font-weight:700;line-height:1.4;}
+.fhint{font-size:11px;color:var(--g4);}
+.fans{font-size:13px;color:var(--gold);margin-top:4px;display:none;}
+.fnav{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:12px;}
+.fnav button{background:transparent;border:1px solid var(--g3);color:var(--w);padding:7px 18px;border-radius:8px;font-family:'Noto Sans KR',sans-serif;font-size:12px;cursor:pointer;}
+.fnav span{font-size:11px;color:var(--g4);}
+.btn-home{width:100%;padding:15px;background:var(--red);border:none;border-radius:12px;color:#fff;
+  font-size:15px;font-weight:700;font-family:'Noto Sans KR',sans-serif;cursor:pointer;margin-bottom:10px;}
+.btn-retry{width:100%;padding:15px;background:transparent;border:1px solid var(--g3);border-radius:12px;color:var(--w);
+  font-size:15px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
+
+/* test mode badge */
+.form-badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--g2);border:1px solid var(--g3);color:var(--g5);letter-spacing:1px;margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home" class="screen on">
+  <div class="home-header">
+    <div class="home-brand">ABS<em>O</em>LUTE</div>
+    <div class="home-tag">천천히 걸어도 목적지에 이를 거란 생각을 버려라</div>
+  </div>
+  <div class="mode-cards">
+    <div class="mode-card primary" onclick="startPractice()">
+      <div class="mode-accent"></div>
+      <div class="mode-label">PRACTICE</div>
+      <div class="mode-title">형식별 연습</div>
+      <div class="mode-desc">1~5형식을 단계별로 연습합니다.<br>형식 탭을 선택해 원하는 형식부터 시작하세요.</div>
+      <div class="mode-arrow">→</div>
+    </div>
+    <div class="mode-card secondary" onclick="startTest()">
+      <div class="mode-accent"></div>
+      <div class="mode-label">TEST</div>
+      <div class="mode-title">실전 테스트</div>
+      <div class="mode-desc">1~5형식 혼합 25문제.<br>형식별 5문제씩 무작위 출제됩니다.</div>
+      <div class="mode-arrow">→</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRACTICE -->
+<div id="practice" class="screen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <div class="top-title">연습</div>
+    <div class="top-score" id="pScore"></div>
+  </div>
+  <div class="form-tabs" id="formTabs"></div>
+  <div class="prog-wrap">
+    <div class="prog-top"><span id="pProg"></span><span id="pFormScore"></span></div>
+    <div class="prog-bar"><div class="prog-fill" id="pFill"></div></div>
+  </div>
+  <div class="card-wrap">
+    <div class="card">
+      <div class="card-meta" id="pMeta"></div>
+      <div class="sent-area" id="pSent"></div>
+      <div class="role-area">
+        <div class="role-hint" id="pHint">단어를 먼저 선택하세요</div>
+        <div class="role-btns" id="pRoles"></div>
+      </div>
+      <div class="act-btns">
+        <button class="btn-check" id="pCheck" onclick="practiceCheck()">확인</button>
+        <button class="btn-next" id="pNext" onclick="practiceNext()">다음 →</button>
+      </div>
+      <div class="fb" id="pFb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TEST -->
+<div id="test" class="screen">
+  <div class="top-bar">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <div class="top-title">실전 테스트</div>
+    <div class="top-score" id="tScore"></div>
+  </div>
+  <div class="prog-wrap" style="padding-top:14px">
+    <div class="prog-top"><span id="tProg"></span><span id="tPct"></span></div>
+    <div class="prog-bar"><div class="prog-fill" id="tFill"></div></div>
+  </div>
+  <div class="card-wrap">
+    <div class="card">
+      <div class="card-meta" id="tMeta"></div>
+      <div class="sent-area" id="tSent"></div>
+      <div class="role-area">
+        <div class="role-hint" id="tHint">단어를 먼저 선택하세요</div>
+        <div class="role-btns" id="tRoles"></div>
+      </div>
+      <div class="act-btns">
+        <button class="btn-check" id="tCheck" onclick="testCheck()">확인</button>
+        <button class="btn-next" id="tNext" onclick="testNext()">다음 →</button>
+      </div>
+      <div class="fb" id="tFb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="screen">
+  <div class="res-header">
+    <div class="home-brand" style="font-size:38px">ABS<em style="color:var(--red);font-style:normal">O</em>LUTE</div>
+    <div class="res-title">결과</div>
+    <div class="res-sub" id="resMode"></div>
+  </div>
+  <div id="resContent"></div>
+</div>
+
+<script>
+/* ════════════════════════════════
+   COLOR MAP
+════════════════════════════════ */
+const RC={S:"#4cc9f0",V:"#f72585",O:"#f4a261",C:"#7bed9f",IO:"#a29bfe",DO:"#fd79a8",OC:"#fdcb6e"};
+const RT={S:"#000",V:"#fff",O:"#000",C:"#000",IO:"#000",DO:"#000",OC:"#000"};
+/* strip trailing punctuation for key matching */
+function clean(w){return w.replace(/[.,!?;:]+$/,"");}
+
+/* ════════════════════════════════
+   DATA
+   ans  : word→role (for grading, key words only)
+   chunks: [{words:[...], role, underline}] for answer display
+   underline:true → draw underline bar for phrase/clause
+════════════════════════════════ */
+const DATA={
+"1형식":{roles:["S","V"],qs:[
+  {s:"There was a white house on the hill.",
+   ans:{was:"V",house:"S"},
+   chunks:[{words:["house"],role:"S"},{words:["was"],role:"V"}],
+   tr:"언덕 위에 하얀 집이 있었다."},
+  {s:"Suddenly there was a popping noise and a flash of light.",
+   ans:{was:"V",noise:"S"},
+   chunks:[{words:["noise"],role:"S"},{words:["was"],role:"V"}],
+   tr:"갑자기 펑 하는 소리와 섬광이 있었다."},
+  {s:"Is there any milk left?",
+   ans:{Is:"V",milk:"S"},
+   chunks:[{words:["milk"],role:"S"},{words:["Is"],role:"V"}],
+   tr:"남은 우유가 있니?"},
+  {s:"There used to be a pond around here.",
+   ans:{used:"V",pond:"S"},
+   chunks:[{words:["pond"],role:"S"},{words:["used"],role:"V"}],
+   tr:"이 근처에 연못이 있었다."},
+  {s:"There seem to be so many squirrels this year",
+   ans:{seem:"V",squirrels:"S"},
+   chunks:[{words:["squirrels"],role:"S"},{words:["seem"],role:"V"}],
+   tr:"올해는 다람쥐가 매우 많은 것 같다."},
+  {s:"There remain many questions for you to answer",
+   ans:{remain:"V",questions:"S"},
+   chunks:[{words:["questions"],role:"S"},{words:["remain"],role:"V"}],
+   tr:"네가 답해야 할 질문들이 많이 남아있다."},
+  {s:"How fast he walks!",
+   ans:{he:"S",walks:"V"},
+   chunks:[{words:["he"],role:"S"},{words:["walks"],role:"V"}],
+   tr:"그는 얼마나 빠르게 걷는가!"},
+  {s:"The door opened and people came out.",
+   ans:{door:"S",opened:"V",people:"S",came:"V"},
+   chunks:[{words:["door"],role:"S"},{words:["opened"],role:"V"},{words:["people"],role:"S"},{words:["came"],role:"V"}],
+   tr:"문이 열리고 사람들이 나왔다."},
+  {s:"An image appeared on the screen.",
+   ans:{image:"S",appeared:"V"},
+   chunks:[{words:["image"],role:"S"},{words:["appeared"],role:"V"}],
+   tr:"화면에 이미지가 나타났다."},
+  {s:"A face appeared at the window.",
+   ans:{face:"S",appeared:"V"},
+   chunks:[{words:["face"],role:"S"},{words:["appeared"],role:"V"}],
+   tr:"창문에 얼굴이 나타났다."},
+  {s:"The accident happened last night.",
+   ans:{accident:"S",happened:"V"},
+   chunks:[{words:["accident"],role:"S"},{words:["happened"],role:"V"}],
+   tr:"사고가 어젯밤에 발생했다."},
+  {s:"It rained a lot yesterday.",
+   ans:{It:"S",rained:"V"},
+   chunks:[{words:["It"],role:"S"},{words:["rained"],role:"V"}],
+   tr:"어제 비가 많이 내렸다."},
+  {s:"Light travels fastest of all",
+   ans:{Light:"S",travels:"V"},
+   chunks:[{words:["Light"],role:"S"},{words:["travels"],role:"V"}],
+   tr:"빛은 모든 것 중에서 가장 빠르게 이동한다."},
+  {s:"They went to New York yesterday.",
+   ans:{They:"S",went:"V"},
+   chunks:[{words:["They"],role:"S"},{words:["went"],role:"V"}],
+   tr:"그들은 어제 뉴욕에 갔다."},
+  {s:"Tom and I were walking along the beach.",
+   ans:{Tom:"S",I:"S",were:"V",walking:"V"},
+   chunks:[{words:["Tom","and","I"],role:"S",underline:true},{words:["were","walking"],role:"V",underline:true}],
+   tr:"Tom과 나는 해변을 따라 걷고 있었다."},
+  {s:"I went there to meet Mr. Watson.",
+   ans:{I:"S",went:"V"},
+   chunks:[{words:["I"],role:"S"},{words:["went"],role:"V"}],
+   tr:"나는 왓슨 씨를 만나기 위해 그곳에 갔다."},
+  {s:"He stopped at a shopping mall to buy his jacket",
+   ans:{He:"S",stopped:"V"},
+   chunks:[{words:["He"],role:"S"},{words:["stopped"],role:"V"}],
+   tr:"그는 재킷을 사기 위해 쇼핑몰에 멈췄다."},
+  {s:"The explosion occurred at 5:30 a.m.",
+   ans:{explosion:"S",occurred:"V"},
+   chunks:[{words:["explosion"],role:"S"},{words:["occurred"],role:"V"}],
+   tr:"폭발은 오전 5시 30분에 발생했다."},
+  {s:"Lower-priced homes are selling well these days.",
+   ans:{homes:"S",are:"V",selling:"V"},
+   chunks:[{words:["homes"],role:"S"},{words:["are","selling"],role:"V",underline:true}],
+   tr:"요즘 저가 주택들이 잘 팔리고 있다."},
+  {s:"Over six inches of snow fell last night.",
+   ans:{snow:"S",fell:"V"},
+   chunks:[{words:["snow"],role:"S"},{words:["fell"],role:"V"}],
+   tr:"어젯밤에 6인치가 넘는 눈이 내렸다."},
+  {s:"A warm breeze was blowing from the south.",
+   ans:{breeze:"S",was:"V",blowing:"V"},
+   chunks:[{words:["breeze"],role:"S"},{words:["was","blowing"],role:"V",underline:true}],
+   tr:"따뜻한 미풍이 남쪽에서 불어오고 있었다."},
+  {s:"The next Olympics will take place in Australia.",
+   ans:{Olympics:"S",will:"V",take:"V"},
+   chunks:[{words:["Olympics"],role:"S"},{words:["will","take"],role:"V",underline:true}],
+   tr:"다음 올림픽은 호주에서 열릴 것이다."},
+  {s:"The education system in Korea has changed a lot since Korean War.",
+   ans:{system:"S",has:"V",changed:"V"},
+   chunks:[{words:["system"],role:"S"},{words:["has","changed"],role:"V",underline:true}],
+   tr:"한국의 교육 시스템은 한국전쟁 이후 많이 변했다."},
+  {s:"Do ghosts really exist?",
+   ans:{ghosts:"S",Do:"V",exist:"V"},
+   chunks:[{words:["ghosts"],role:"S"},{words:["Do","exist"],role:"V",underline:true}],
+   tr:"유령이 정말로 존재하는가?"}
+]},
+
+"2형식":{roles:["S","V","C"],qs:[
+  {s:"My teacher is gentle.",ans:{teacher:"S",is:"V",gentle:"C"},chunks:[{words:["teacher"],role:"S"},{words:["is"],role:"V"},{words:["gentle"],role:"C"}],tr:"내 선생님은 온화하다."},
+  {s:"This is a donkey.",ans:{This:"S",is:"V",donkey:"C"},chunks:[{words:["This"],role:"S"},{words:["is"],role:"V"},{words:["donkey"],role:"C"}],tr:"이것은 당나귀이다."},
+  {s:"Sandy looks happy today.",ans:{Sandy:"S",looks:"V",happy:"C"},chunks:[{words:["Sandy"],role:"S"},{words:["looks"],role:"V"},{words:["happy"],role:"C"}],tr:"Sandy는 오늘 행복해 보인다."},
+  {s:"It is getting colder and colder these days",ans:{It:"S",is:"V",getting:"V",colder:"C"},chunks:[{words:["It"],role:"S"},{words:["is","getting"],role:"V",underline:true},{words:["colder"],role:"C"}],tr:"요즘 점점 더 추워지고 있다."},
+  {s:"The question is hard to answer.",ans:{question:"S",is:"V",hard:"C"},chunks:[{words:["question"],role:"S"},{words:["is"],role:"V"},{words:["hard","to","answer"],role:"C",underline:true}],tr:"그 질문은 답하기 어렵다."},
+  {s:"How cold it is today!",ans:{it:"S",is:"V",cold:"C"},chunks:[{words:["it"],role:"S"},{words:["is"],role:"V"},{words:["cold"],role:"C"}],tr:"오늘 얼마나 추운가!"},
+  {s:"I would be sad to see you cry.",ans:{I:"S",would:"V",be:"V",sad:"C"},chunks:[{words:["I"],role:"S"},{words:["would","be"],role:"V",underline:true},{words:["sad"],role:"C"}],tr:"나는 네가 우는 것을 보면 슬플 것이다."},
+  {s:"The cake tastes pretty good to me.",ans:{cake:"S",tastes:"V",good:"C"},chunks:[{words:["cake"],role:"S"},{words:["tastes"],role:"V"},{words:["good"],role:"C"}],tr:"그 케이크는 나에게 꽤 맛있다."},
+  {s:"I don't really feel hungry yet.",ans:{I:"S",feel:"V",hungry:"C"},chunks:[{words:["I"],role:"S"},{words:["feel"],role:"V"},{words:["hungry"],role:"C"}],tr:"나는 아직 별로 배가 고프지 않다."},
+  {s:"Nick sounds like a nice guy.",ans:{Nick:"S",sounds:"V",guy:"C"},chunks:[{words:["Nick"],role:"S"},{words:["sounds"],role:"V"},{words:["guy"],role:"C"}],tr:"Nick은 좋은 사람처럼 들린다."},
+  {s:"He seems to be doing well.",ans:{He:"S",seems:"V",well:"C"},chunks:[{words:["He"],role:"S"},{words:["seems"],role:"V"},{words:["well"],role:"C"}],tr:"그는 잘 지내고 있는 것 같다."},
+  {s:"The city appeared calm after the previous night's fighting",ans:{city:"S",appeared:"V",calm:"C"},chunks:[{words:["city"],role:"S"},{words:["appeared"],role:"V"},{words:["calm"],role:"C"}],tr:"도시는 전날 밤 전투 이후 평온해 보였다."},
+  {s:"Loving one another is important",ans:{Loving:"S",is:"V",important:"C"},chunks:[{words:["Loving","one","another"],role:"S",underline:true},{words:["is"],role:"V"},{words:["important"],role:"C"}],tr:"서로 사랑하는 것은 중요하다."},
+  {s:"My only wish is to live happily.",ans:{wish:"S",is:"V",live:"C"},chunks:[{words:["wish"],role:"S"},{words:["is"],role:"V"},{words:["to","live","happily"],role:"C",underline:true}],tr:"내 유일한 소원은 행복하게 사는 것이다."},
+  {s:"She is a person of great ability.",ans:{She:"S",is:"V",person:"C"},chunks:[{words:["She"],role:"S"},{words:["is"],role:"V"},{words:["person"],role:"C"}],tr:"그녀는 매우 능력 있는 사람이다."},
+  {s:"This machine will be of some use.",ans:{machine:"S",will:"V",be:"V",use:"C"},chunks:[{words:["machine"],role:"S"},{words:["will","be"],role:"V",underline:true},{words:["use"],role:"C"}],tr:"이 기계는 어느 정도 도움이 될 것이다."},
+  {s:"My holiday plan is to play tennis.",ans:{plan:"S",is:"V",play:"C"},chunks:[{words:["plan"],role:"S"},{words:["is"],role:"V"},{words:["to","play","tennis"],role:"C",underline:true}],tr:"내 휴가 계획은 테니스를 치는 것이다."},
+  {s:"This summer appears to be very hot.",ans:{summer:"S",appears:"V",hot:"C"},chunks:[{words:["summer"],role:"S"},{words:["appears"],role:"V"},{words:["hot"],role:"C"}],tr:"이번 여름은 매우 더울 것 같다."},
+  {s:"Roger appeared very upset.",ans:{Roger:"S",appeared:"V",upset:"C"},chunks:[{words:["Roger"],role:"S"},{words:["appeared"],role:"V"},{words:["upset"],role:"C"}],tr:"Roger는 매우 속상해 보였다."},
+  {s:"It is possible to be there on time.",
+   ans:{It:"S",is:"V",possible:"C"},
+   chunks:[{words:["It"],role:"S"},{words:["is"],role:"V"},{words:["possible"],role:"C"},{words:["to","be","there","on","time"],role:"S",underline:true}],
+   tr:"거기에 제때 도착하는 것이 가능하다. (It=가주어, to be there on time=진주어)"},
+  {s:"It is hard for me to learn how to drive a car.",
+   ans:{It:"S",is:"V",hard:"C"},
+   chunks:[{words:["It"],role:"S"},{words:["is"],role:"V"},{words:["hard"],role:"C"},{words:["for","me","to","learn","how","to","drive","a","car"],role:"S",underline:true}],
+   tr:"차 운전하는 법을 배우는 것은 나에게 어렵다. (It=가주어, for me to learn...=진주어)"},
+  {s:"It is kind of you to take good care of my baby.",
+   ans:{It:"S",is:"V",kind:"C"},
+   chunks:[{words:["It"],role:"S"},{words:["is"],role:"V"},{words:["kind"],role:"C"},{words:["of","you","to","take","good","care","of","my","baby"],role:"S",underline:true}],
+   tr:"내 아기를 잘 돌봐주다니 당신은 친절하군요. (It=가주어, of you to take...=진주어)"},
+  {s:"I was too sleepy to finish my homework last night.",ans:{I:"S",was:"V",sleepy:"C"},chunks:[{words:["I"],role:"S"},{words:["was"],role:"V"},{words:["sleepy"],role:"C"}],tr:"나는 어젯밤에 너무 졸려서 숙제를 끝낼 수 없었다."},
+  {s:"She is so old that she can stay home alone.",ans:{She:"S",is:"V",old:"C"},chunks:[{words:["She"],role:"S"},{words:["is"],role:"V"},{words:["old"],role:"C"}],tr:"그녀는 너무 나이가 들어서 혼자 집에 있을 수 있다."},
+  {s:"The problem is that you are not doing your best.",ans:{problem:"S",is:"V",best:"C"},chunks:[{words:["problem"],role:"S"},{words:["is"],role:"V"},{words:["that","you","are","not","doing","your","best"],role:"C",underline:true}],tr:"문제는 당신이 최선을 다하지 않고 있다는 것이다."}
+]},
+
+"3형식":{roles:["S","V","O"],qs:[
+  {s:"I like coffee.",ans:{I:"S",like:"V",coffee:"O"},chunks:[{words:["I"],role:"S"},{words:["like"],role:"V"},{words:["coffee"],role:"O"}],tr:"나는 커피를 좋아한다."},
+  {s:"I would like to have coffee with you this afternoon.",ans:{I:"S",like:"V",coffee:"O"},chunks:[{words:["I"],role:"S"},{words:["like"],role:"V"},{words:["to","have","coffee","with","you","this","afternoon"],role:"O",underline:true}],tr:"나는 오늘 오후에 당신과 커피를 마시고 싶다."},
+  {s:"Please open the window.",ans:{open:"V",window:"O"},chunks:[{words:["open"],role:"V"},{words:["window"],role:"O"}],tr:"창문을 열어주세요."},
+  {s:"He can play the piano.",ans:{He:"S",play:"V",piano:"O"},chunks:[{words:["He"],role:"S"},{words:["play"],role:"V"},{words:["piano"],role:"O"}],tr:"그는 피아노를 연주할 수 있다."},
+  {s:"The President answered the reporters' questions.",ans:{President:"S",answered:"V",questions:"O"},chunks:[{words:["President"],role:"S"},{words:["answered"],role:"V"},{words:["questions"],role:"O"}],tr:"대통령은 기자들의 질문에 답했다."},
+  {s:"My mother makes a cheese cake on my birthday every year.",ans:{mother:"S",makes:"V",cake:"O"},chunks:[{words:["mother"],role:"S"},{words:["makes"],role:"V"},{words:["cake"],role:"O"}],tr:"내 어머니는 매년 내 생일에 치즈케이크를 만드신다."},
+  {s:"They deeply loved each other.",ans:{They:"S",loved:"V",other:"O"},chunks:[{words:["They"],role:"S"},{words:["loved"],role:"V"},{words:["other"],role:"O"}],tr:"그들은 서로를 깊이 사랑했다."},
+  {s:"What does she have in her bag?",ans:{she:"S",have:"V",What:"O"},chunks:[{words:["she"],role:"S"},{words:["have"],role:"V"},{words:["What"],role:"O"}],tr:"그녀의 가방 안에 무엇이 있나요?"},
+  {s:"Where did you meet her yesterday?",ans:{you:"S",meet:"V",her:"O"},chunks:[{words:["you"],role:"S"},{words:["meet"],role:"V"},{words:["her"],role:"O"}],tr:"어제 어디서 그녀를 만났나요?"},
+  {s:"He kissed her on the forehead.",ans:{He:"S",kissed:"V",her:"O"},chunks:[{words:["He"],role:"S"},{words:["kissed"],role:"V"},{words:["her"],role:"O"}],tr:"그는 그녀의 이마에 키스했다."},
+  {s:"The thieves entered the building by the back door.",ans:{thieves:"S",entered:"V",building:"O"},chunks:[{words:["thieves"],role:"S"},{words:["entered"],role:"V"},{words:["building"],role:"O"}],tr:"도둑들은 뒷문으로 건물에 들어갔다."},
+  {s:"How can I reach you?",ans:{I:"S",reach:"V",you:"O"},chunks:[{words:["I"],role:"S"},{words:["reach"],role:"V"},{words:["you"],role:"O"}],tr:"어떻게 하면 당신에게 연락할 수 있나요?"},
+  {s:"Sorry I'm late; I had to change a tire on the way here",ans:{I:"S",had:"V",tire:"O"},chunks:[{words:["I"],role:"S"},{words:["had"],role:"V"},{words:["tire"],role:"O"}],tr:"늦어서 미안해요; 오는 길에 타이어를 교체해야 했어요."},
+  {s:"To get up early, you'd better set the alarm clock.",ans:{"you'd":"S",set:"V",clock:"O"},chunks:[{words:["you'd"],role:"S"},{words:["set"],role:"V"},{words:["clock"],role:"O"}],tr:"일찍 일어나려면 알람을 맞추는 게 좋겠다."},
+  {s:"I enjoy watching the children play soccer.",ans:{I:"S",enjoy:"V",watching:"O"},chunks:[{words:["I"],role:"S"},{words:["enjoy"],role:"V"},{words:["watching","the","children","play","soccer"],role:"O",underline:true}],tr:"나는 아이들이 축구하는 것을 보는 것을 즐긴다."},
+  {s:"They avoided going out at night.",ans:{They:"S",avoided:"V",going:"O"},chunks:[{words:["They"],role:"S"},{words:["avoided"],role:"V"},{words:["going","out","at","night"],role:"O",underline:true}],tr:"그들은 밤에 외출하는 것을 피했다."},
+  {s:"We could see nothing but houses as far as the eye could reach.",ans:{We:"S",see:"V",nothing:"O"},chunks:[{words:["We"],role:"S"},{words:["see"],role:"V"},{words:["nothing"],role:"O"}],tr:"눈이 닿는 데까지 집밖에 볼 수 없었다."},
+  {s:"He didn't know where to go.",ans:{He:"S",know:"V",where:"O"},chunks:[{words:["He"],role:"S"},{words:["know"],role:"V"},{words:["where","to","go"],role:"O",underline:true}],tr:"그는 어디로 가야 할지 몰랐다."},
+  {s:"They decided not to attend the meeting.",ans:{They:"S",decided:"V",attend:"O"},chunks:[{words:["They"],role:"S"},{words:["decided"],role:"V"},{words:["not","to","attend","the","meeting"],role:"O",underline:true}],tr:"그들은 회의에 참석하지 않기로 결정했다."},
+  {s:"She wanted to marry a rich man.",ans:{She:"S",wanted:"V",marry:"O"},chunks:[{words:["She"],role:"S"},{words:["wanted"],role:"V"},{words:["to","marry","a","rich","man"],role:"O",underline:true}],tr:"그녀는 부유한 남자와 결혼하고 싶었다."},
+  {s:"I want to drink some cool water.",ans:{I:"S",want:"V",drink:"O"},chunks:[{words:["I"],role:"S"},{words:["want"],role:"V"},{words:["to","drink","some","cool","water"],role:"O",underline:true}],tr:"나는 시원한 물을 마시고 싶다."},
+  {s:"Do you know whether he is a doctor?",ans:{you:"S",know:"V",whether:"O"},chunks:[{words:["you"],role:"S"},{words:["know"],role:"V"},{words:["whether","he","is","a","doctor"],role:"O",underline:true}],tr:"그가 의사인지 아세요?"},
+  {s:"I don't know what you're talking about!",ans:{I:"S",know:"V",what:"O"},chunks:[{words:["I"],role:"S"},{words:["know"],role:"V"},{words:["what","you're","talking","about"],role:"O",underline:true}],tr:"나는 당신이 무슨 말을 하는지 모르겠다!"},
+  {s:"I want a magazine to read on the train.",ans:{I:"S",want:"V",magazine:"O"},chunks:[{words:["I"],role:"S"},{words:["want"],role:"V"},{words:["magazine"],role:"O"}],tr:"나는 기차에서 읽을 잡지를 원한다."},
+  {s:"Studies have shown that consumers are buying more organic produce.",ans:{Studies:"S",shown:"V",that:"O"},chunks:[{words:["Studies"],role:"S"},{words:["have","shown"],role:"V",underline:true},{words:["that","consumers","are","buying","more","organic","produce"],role:"O",underline:true}],tr:"연구들은 소비자들이 더 많은 유기농 농산물을 구매하고 있다는 것을 보여주었다."}
+]},
+
+"4형식":{roles:["S","V","IO","DO"],qs:[
+  {s:"My boyfriend bought me a lovely dress",ans:{boyfriend:"S",bought:"V",me:"IO",dress:"DO"},chunks:[{words:["boyfriend"],role:"S"},{words:["bought"],role:"V"},{words:["me"],role:"IO"},{words:["dress"],role:"DO"}],tr:"내 남자친구가 나에게 예쁜 원피스를 사줬다."},
+  {s:"Tell me all about your new job.",ans:{Tell:"V",me:"IO",job:"DO"},chunks:[{words:["Tell"],role:"V"},{words:["me"],role:"IO"},{words:["job"],role:"DO"}],tr:"새 직장에 대해 모두 말해줘."},
+  {s:"Did you buy him a bicycle?",ans:{you:"S",buy:"V",him:"IO",bicycle:"DO"},chunks:[{words:["you"],role:"S"},{words:["buy"],role:"V"},{words:["him"],role:"IO"},{words:["bicycle"],role:"DO"}],tr:"너 그에게 자전거를 사줬니?"},
+  {s:"Dan gave me a ride to work.",ans:{Dan:"S",gave:"V",me:"IO",ride:"DO"},chunks:[{words:["Dan"],role:"S"},{words:["gave"],role:"V"},{words:["me"],role:"IO"},{words:["ride"],role:"DO"}],tr:"Dan이 나를 직장까지 태워다줬다."},
+  {s:"The doctor gave him something for the pain",ans:{doctor:"S",gave:"V",him:"IO",something:"DO"},chunks:[{words:["doctor"],role:"S"},{words:["gave"],role:"V"},{words:["him"],role:"IO"},{words:["something","for","the","pain"],role:"DO",underline:true}],tr:"의사가 그에게 통증에 대한 약을 주었다."},
+  {s:"Show her the right way to do it.",ans:{Show:"V",her:"IO",way:"DO"},chunks:[{words:["Show"],role:"V"},{words:["her"],role:"IO"},{words:["the","right","way","to","do","it"],role:"DO",underline:true}],tr:"그녀에게 올바른 방법을 보여줘."},
+  {s:"My parents got me this T-shirt in Switzerland.",ans:{parents:"S",got:"V",me:"IO","T-shirt":"DO"},chunks:[{words:["parents"],role:"S"},{words:["got"],role:"V"},{words:["me"],role:"IO"},{words:["T-shirt"],role:"DO"}],tr:"부모님이 스위스에서 나에게 이 티셔츠를 사줬다."},
+  {s:"Could you bring me a glass of water?",ans:{you:"S",bring:"V",me:"IO",glass:"DO"},chunks:[{words:["you"],role:"S"},{words:["bring"],role:"V"},{words:["me"],role:"IO"},{words:["a","glass","of","water"],role:"DO",underline:true}],tr:"물 한 잔 가져다주시겠어요?"},
+  {s:"My grandma showed me how to make cornbread",ans:{grandma:"S",showed:"V",me:"IO",how:"DO"},chunks:[{words:["grandma"],role:"S"},{words:["showed"],role:"V"},{words:["me"],role:"IO"},{words:["how","to","make","cornbread"],role:"DO",underline:true}],tr:"할머니가 나에게 콘브레드 만드는 법을 보여줬다."},
+  {s:"He told me what to do with the book.",ans:{He:"S",told:"V",me:"IO",what:"DO"},chunks:[{words:["He"],role:"S"},{words:["told"],role:"V"},{words:["me"],role:"IO"},{words:["what","to","do","with","the","book"],role:"DO",underline:true}],tr:"그는 나에게 그 책으로 무엇을 해야 할지 말해줬다."},
+  {s:"My mother taught me how to drive.",ans:{mother:"S",taught:"V",me:"IO",how:"DO"},chunks:[{words:["mother"],role:"S"},{words:["taught"],role:"V"},{words:["me"],role:"IO"},{words:["how","to","drive"],role:"DO",underline:true}],tr:"어머니가 나에게 운전하는 법을 가르쳐줬다."},
+  {s:"Can you teach me one of your card tricks?",ans:{you:"S",teach:"V",me:"IO",one:"DO"},chunks:[{words:["you"],role:"S"},{words:["teach"],role:"V"},{words:["me"],role:"IO"},{words:["one","of","your","card","tricks"],role:"DO",underline:true}],tr:"당신의 카드 마술 중 하나를 가르쳐줄 수 있나요?"},
+  {s:"My boss found her a job.",ans:{boss:"S",found:"V",her:"IO",job:"DO"},chunks:[{words:["boss"],role:"S"},{words:["found"],role:"V"},{words:["her"],role:"IO"},{words:["job"],role:"DO"}],tr:"내 상사가 그녀에게 일자리를 찾아줬다."},
+  {s:"A hotel receptionist called me a taxi.",ans:{receptionist:"S",called:"V",me:"IO",taxi:"DO"},chunks:[{words:["receptionist"],role:"S"},{words:["called"],role:"V"},{words:["me"],role:"IO"},{words:["taxi"],role:"DO"}],tr:"호텔 직원이 나에게 택시를 불러줬다."},
+  {s:"The professor handed her some books.",ans:{professor:"S",handed:"V",her:"IO",books:"DO"},chunks:[{words:["professor"],role:"S"},{words:["handed"],role:"V"},{words:["her"],role:"IO"},{words:["some","books"],role:"DO",underline:true}],tr:"교수가 그녀에게 책 몇 권을 건네줬다."},
+  {s:"I showed a policeman my driver's license.",ans:{I:"S",showed:"V",policeman:"IO",license:"DO"},chunks:[{words:["I"],role:"S"},{words:["showed"],role:"V"},{words:["policeman"],role:"IO"},{words:["my","driver's","license"],role:"DO",underline:true}],tr:"나는 경찰관에게 운전면허증을 보여줬다."},
+  {s:"The priest offered the children some cookies",ans:{priest:"S",offered:"V",children:"IO",cookies:"DO"},chunks:[{words:["priest"],role:"S"},{words:["offered"],role:"V"},{words:["children"],role:"IO"},{words:["some","cookies"],role:"DO",underline:true}],tr:"신부님이 아이들에게 쿠키를 제공했다."},
+  {s:"This computer will save us a lot of work.",ans:{computer:"S",save:"V",us:"IO",lot:"DO"},chunks:[{words:["computer"],role:"S"},{words:["will","save"],role:"V",underline:true},{words:["us"],role:"IO"},{words:["a","lot","of","work"],role:"DO",underline:true}],tr:"이 컴퓨터는 우리에게 많은 작업을 절약해줄 것이다."},
+  {s:"This computer has caused me a lot of trouble.",ans:{computer:"S",caused:"V",me:"IO",lot:"DO"},chunks:[{words:["computer"],role:"S"},{words:["has","caused"],role:"V",underline:true},{words:["me"],role:"IO"},{words:["a","lot","of","trouble"],role:"DO",underline:true}],tr:"이 컴퓨터는 나에게 많은 문제를 일으켰다."},
+  {s:"Smoking may cost teenagers their looks",ans:{Smoking:"S",cost:"V",teenagers:"IO",looks:"DO"},chunks:[{words:["Smoking"],role:"S"},{words:["may","cost"],role:"V",underline:true},{words:["teenagers"],role:"IO"},{words:["their","looks"],role:"DO",underline:true}],tr:"흡연은 십대들의 외모를 잃게 할 수도 있다."},
+  {s:"You should send Pat some flowers to say thank you.",ans:{You:"S",send:"V",Pat:"IO",flowers:"DO"},chunks:[{words:["You"],role:"S"},{words:["should","send"],role:"V",underline:true},{words:["Pat"],role:"IO"},{words:["some","flowers"],role:"DO",underline:true}],tr:"감사 인사를 전하기 위해 Pat에게 꽃을 좀 보내야 해."},
+  {s:"I'll send you an email when I know more.",ans:{"I'll":"S",send:"V",you:"IO",email:"DO"},chunks:[{words:["I'll"],role:"S"},{words:["send"],role:"V"},{words:["you"],role:"IO"},{words:["an","email"],role:"DO",underline:true}],tr:"더 알게 되면 이메일을 보낼게요."},
+  {s:"His mistake cost him his job.",ans:{mistake:"S",cost:"V",him:"IO",job:"DO"},chunks:[{words:["mistake"],role:"S"},{words:["cost"],role:"V"},{words:["him"],role:"IO"},{words:["his","job"],role:"DO",underline:true}],tr:"그의 실수로 그는 직장을 잃었다."},
+  {s:"His mistake cost the company a lot of financial losses",ans:{mistake:"S",cost:"V",company:"IO",lot:"DO"},chunks:[{words:["mistake"],role:"S"},{words:["cost"],role:"V"},{words:["company"],role:"IO"},{words:["a","lot","of","financial","losses"],role:"DO",underline:true}],tr:"그의 실수로 회사는 많은 재정적 손실을 입었다."},
+  {s:"I wish you a merry Christmas.",ans:{I:"S",wish:"V",you:"IO",Christmas:"DO"},chunks:[{words:["I"],role:"S"},{words:["wish"],role:"V"},{words:["you"],role:"IO"},{words:["a","merry","Christmas"],role:"DO",underline:true}],tr:"즐거운 크리스마스 되세요."}
+]},
+
+"5형식":{roles:["S","V","O","OC"],qs:[
+  {s:"They consider the man honest.",ans:{They:"S",consider:"V",man:"O",honest:"OC"},chunks:[{words:["They"],role:"S"},{words:["consider"],role:"V"},{words:["man"],role:"O"},{words:["honest"],role:"OC"}],tr:"그들은 그 남자가 정직하다고 생각한다."},
+  {s:"We call her Snow White.",ans:{We:"S",call:"V",her:"O",White:"OC"},chunks:[{words:["We"],role:"S"},{words:["call"],role:"V"},{words:["her"],role:"O"},{words:["Snow","White"],role:"OC",underline:true}],tr:"우리는 그녀를 백설공주라고 부른다."},
+  {s:"I found him very kind.",ans:{I:"S",found:"V",him:"O",kind:"OC"},chunks:[{words:["I"],role:"S"},{words:["found"],role:"V"},{words:["him"],role:"O"},{words:["very","kind"],role:"OC",underline:true}],tr:"나는 그가 매우 친절하다는 것을 알았다."},
+  {s:"The movie made me sad.",ans:{movie:"S",made:"V",me:"O",sad:"OC"},chunks:[{words:["movie"],role:"S"},{words:["made"],role:"V"},{words:["me"],role:"O"},{words:["sad"],role:"OC"}],tr:"그 영화는 나를 슬프게 했다."},
+  {s:"Let us go to the zoo.",ans:{Let:"V",us:"O",go:"OC"},chunks:[{words:["Let"],role:"V"},{words:["us"],role:"O"},{words:["go","to","the","zoo"],role:"OC",underline:true}],tr:"우리를 동물원에 가게 해줘."},
+  {s:"He made me clean the room.",ans:{He:"S",made:"V",me:"O",clean:"OC"},chunks:[{words:["He"],role:"S"},{words:["made"],role:"V"},{words:["me"],role:"O"},{words:["clean","the","room"],role:"OC",underline:true}],tr:"그는 나에게 방을 청소하게 했다."},
+  {s:"The doctor made me stay in bed for three days.",ans:{doctor:"S",made:"V",me:"O",stay:"OC"},chunks:[{words:["doctor"],role:"S"},{words:["made"],role:"V"},{words:["me"],role:"O"},{words:["stay","in","bed","for","three","days"],role:"OC",underline:true}],tr:"의사는 나를 3일 동안 침대에 있게 했다."},
+  {s:"Phil had the plumber repair the leak.",ans:{Phil:"S",had:"V",plumber:"O",repair:"OC"},chunks:[{words:["Phil"],role:"S"},{words:["had"],role:"V"},{words:["plumber"],role:"O"},{words:["repair","the","leak"],role:"OC",underline:true}],tr:"Phil은 배관공에게 누수를 수리하게 했다."},
+  {s:"My father let me drive his car.",ans:{father:"S",let:"V",me:"O",drive:"OC"},chunks:[{words:["father"],role:"S"},{words:["let"],role:"V"},{words:["me"],role:"O"},{words:["drive","his","car"],role:"OC",underline:true}],tr:"아버지는 나에게 그의 차를 운전하게 해줬다."},
+  {s:"I just had it fixed.",ans:{I:"S",had:"V",it:"O",fixed:"OC"},chunks:[{words:["I"],role:"S"},{words:["had"],role:"V"},{words:["it"],role:"O"},{words:["fixed"],role:"OC"}],tr:"나는 그것을 방금 수리했다."},
+  {s:"I had my hair cut today.",ans:{I:"S",had:"V",hair:"O",cut:"OC"},chunks:[{words:["I"],role:"S"},{words:["had"],role:"V"},{words:["my","hair"],role:"O",underline:true},{words:["cut"],role:"OC"}],tr:"오늘 머리를 잘랐다."},
+  {s:"We're having the house painted this week.",ans:{"We're":"S",having:"V",house:"O",painted:"OC"},chunks:[{words:["We're"],role:"S"},{words:["having"],role:"V"},{words:["house"],role:"O"},{words:["painted"],role:"OC"}],tr:"이번 주에 집을 페인트칠하고 있다."},
+  {s:"They should have the car ready by Monday",ans:{They:"S",have:"V",car:"O",ready:"OC"},chunks:[{words:["They"],role:"S"},{words:["should","have"],role:"V",underline:true},{words:["car"],role:"O"},{words:["ready"],role:"OC"}],tr:"그들은 월요일까지 차를 준비해놓아야 한다."},
+  {s:"Last night I got my car stolen.",ans:{I:"S",got:"V",car:"O",stolen:"OC"},chunks:[{words:["I"],role:"S"},{words:["got"],role:"V"},{words:["my","car"],role:"O",underline:true},{words:["stolen"],role:"OC"}],tr:"어젯밤 내 차가 도난당했다."},
+  {s:"The man helped me to find my key.",ans:{man:"S",helped:"V",me:"O",find:"OC"},chunks:[{words:["man"],role:"S"},{words:["helped"],role:"V"},{words:["me"],role:"O"},{words:["to","find","my","key"],role:"OC",underline:true}],tr:"그 남자는 나의 열쇠를 찾는 것을 도와줬다."},
+  {s:"I am helping my father to fix his car.",ans:{I:"S",helping:"V",father:"O",fix:"OC"},chunks:[{words:["I"],role:"S"},{words:["am","helping"],role:"V",underline:true},{words:["father"],role:"O"},{words:["to","fix","his","car"],role:"OC",underline:true}],tr:"나는 아버지가 차를 수리하는 것을 돕고 있다."},
+  {s:"I heard her cry out with pain last night.",ans:{I:"S",heard:"V",her:"O",cry:"OC"},chunks:[{words:["I"],role:"S"},{words:["heard"],role:"V"},{words:["her"],role:"O"},{words:["cry","out","with","pain"],role:"OC",underline:true}],tr:"나는 어젯밤 그녀가 고통으로 소리치는 것을 들었다."},
+  {s:"Do you smell something burning?",ans:{you:"S",smell:"V",something:"O",burning:"OC"},chunks:[{words:["you"],role:"S"},{words:["smell"],role:"V"},{words:["something"],role:"O"},{words:["burning"],role:"OC"}],tr:"뭔가 타는 냄새가 나나요?"},
+  {s:"I noticed some of my students standing next to their seats.",ans:{I:"S",noticed:"V",some:"O",standing:"OC"},chunks:[{words:["I"],role:"S"},{words:["noticed"],role:"V"},{words:["some","of","my","students"],role:"O",underline:true},{words:["standing","next","to","their","seats"],role:"OC",underline:true}],tr:"나는 내 학생들 중 일부가 자리 옆에 서 있는 것을 알아챘다."},
+  {s:"Look at the bird singing in the tree.",ans:{Look:"V",bird:"O",singing:"OC"},chunks:[{words:["Look"],role:"V"},{words:["bird"],role:"O"},{words:["singing","in","the","tree"],role:"OC",underline:true}],tr:"나무에서 노래하는 새를 봐."},
+  {s:"I want you to have dinner with me.",ans:{I:"S",want:"V",you:"O",have:"OC"},chunks:[{words:["I"],role:"S"},{words:["want"],role:"V"},{words:["you"],role:"O"},{words:["to","have","dinner","with","me"],role:"OC",underline:true}],tr:"나는 당신이 나와 함께 저녁을 먹기를 원한다."},
+  {s:"I asked her to meet him again",ans:{I:"S",asked:"V",her:"O",meet:"OC"},chunks:[{words:["I"],role:"S"},{words:["asked"],role:"V"},{words:["her"],role:"O"},{words:["to","meet","him","again"],role:"OC",underline:true}],tr:"나는 그녀에게 그를 다시 만나달라고 부탁했다."},
+  {s:"Mom told me to take out the trash before I leave.",ans:{Mom:"S",told:"V",me:"O",take:"OC"},chunks:[{words:["Mom"],role:"S"},{words:["told"],role:"V"},{words:["me"],role:"O"},{words:["to","take","out","the","trash","before","I","leave"],role:"OC",underline:true}],tr:"엄마는 내가 나가기 전에 쓰레기를 버리라고 했다."},
+  {s:"Health officials may order the hospital to change its hiring policies",ans:{officials:"S",order:"V",hospital:"O",change:"OC"},chunks:[{words:["officials"],role:"S"},{words:["may","order"],role:"V",underline:true},{words:["hospital"],role:"O"},{words:["to","change","its","hiring","policies"],role:"OC",underline:true}],tr:"보건 당국은 병원에 채용 정책을 변경하도록 명령할 수 있다."},
+  {s:"A boring speech put them to sleep!",ans:{speech:"S",put:"V",them:"O",sleep:"OC"},chunks:[{words:["speech"],role:"S"},{words:["put"],role:"V"},{words:["them"],role:"O"},{words:["to","sleep"],role:"OC",underline:true}],tr:"지루한 연설이 그들을 잠들게 했다."}
+]}};
+
+/* test pool: longer/complex sentences per form */
+const TEST_POOL={
+"1형식":["Tom and I were walking along the beach.","Lower-priced homes are selling well these days.","A warm breeze was blowing from the south.","The next Olympics will take place in Australia.","The education system in Korea has changed a lot since Korean War.","There remain many questions for you to answer","There seem to be so many squirrels this year"],
+"2형식":["Loving one another is important","My only wish is to live happily.","My holiday plan is to play tennis.","The problem is that you are not doing your best.","It is hard for me to learn how to drive a car.","The question is hard to answer.","It is kind of you to take good care of my baby."],
+"3형식":["I enjoy watching the children play soccer.","They avoided going out at night.","He didn't know where to go.","They decided not to attend the meeting.","She wanted to marry a rich man.","Do you know whether he is a doctor?","I don't know what you're talking about!","Studies have shown that consumers are buying more organic produce.","I would like to have coffee with you this afternoon."],
+"4형식":["My grandma showed me how to make cornbread","He told me what to do with the book.","Show her the right way to do it.","Could you bring me a glass of water?","Can you teach me one of your card tricks?","This computer will save us a lot of work.","His mistake cost the company a lot of financial losses"],
+"5형식":["The doctor made me stay in bed for three days.","Phil had the plumber repair the leak.","I am helping my father to fix his car.","I heard her cry out with pain last night.","I noticed some of my students standing next to their seats.","Mom told me to take out the trash before I leave.","Health officials may order the hospital to change its hiring policies","I want you to have dinner with me."]
+};
+
+const WEAK={
+"4형식":[{word:"give/tell/teach/show/send",desc:"→ 전치사 to"},{word:"buy/make/get/cook/find",desc:"→ 전치사 for"},{word:"ask/require/inquire",desc:"→ 전치사 of"}],
+"5형식":[{word:"have/let/make/help",desc:"→ 사역동사 (OC: 원형)"},{word:"see/hear/watch/feel/smell",desc:"→ 지각동사 (OC: 원형/ing)"},{word:"ask/tell/want/allow/order",desc:"→ 기타 (OC: to+원형)"}],
+"2형식":[{word:"feel/smell/sound/taste/look",desc:"→ 감각동사 (C: 형용사)"},{word:"turn/get/become/grow/fall",desc:"→ 상태변화"},{word:"keep/remain/stay",desc:"→ 상태유지"}],
+"1형식":[{word:"go/come/arrive/leave/begin/start",desc:"→ 왕래발착"},{word:"rise/rain/set/blow",desc:"→ 자연현상"}],
+"3형식":[{word:"enjoy/avoid/finish/mind/stop",desc:"→ 동명사 목적어"},{word:"want/decide/hope/plan",desc:"→ to부정사 목적어"}]
+};
+
+const forms=Object.keys(DATA);
+
+/* ── SHARED STATE ── */
+let mode="",cf=0,cq=0,sel=null,ua={},done=false;
+let pSc={},pTot={};
+let testQs=[],tIdx=0,tSc=0,tDone=false,tSel=null,tUa={};
+
+forms.forEach(f=>{pSc[f]=0;pTot[f]=0;});
+
+/* ── NAVIGATION ── */
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));document.getElementById(id).classList.add("on");}
+function goHome(){show("home");}
+
+/* ── BUILD ANSWER HTML ── */
+function buildAnsHTML(q){
+  const words=q.s.split(" ");
+  // map word→chunk
+  const chunkOf={};
+  q.chunks.forEach((ch,ci)=>ch.words.forEach(w=>{chunkOf[w]=ci;}));
+  // group words into segments: {type:"chunk",ci,words} or {type:"word",w}
+  const segments=[];
+  let i=0;
+  while(i<words.length){
+    const w=words[i];
+    const ci=chunkOf[w];
+    if(ci!==undefined){
+      const ch=q.chunks[ci];
+      if(ch.words.length>1 && ch.underline){
+        segments.push({type:"chunk",ch,ci});
+        i+=ch.words.length;
+      } else {
+        segments.push({type:"word",w,role:ch.role});
+        i++;
+      }
+    } else {
+      segments.push({type:"plain",w});
+      i++;
+    }
+  }
+  return segments.map(seg=>{
+    if(seg.type==="word"){
+      return `<div class="aw"><div class="aw-text">${seg.w}</div><div class="aw-tag" style="background:${RC[seg.role]};color:${RT[seg.role]}">${seg.role}</div></div>`;
+    } else if(seg.type==="plain"){
+      return `<div class="aw"><div class="aw-text">${seg.w}</div><div class="aw-spacer"></div></div>`;
+    } else {
+      // chunk with underline
+      const ch=seg.ch;
+      const inner=ch.words.map(w=>`<div class="aw" style="margin-right:4px"><div class="aw-text">${w}</div><div class="aw-spacer"></div></div>`).join("");
+      return `<div class="chunk-wrap">
+        <div class="chunk-group">${inner}</div>
+        <div class="chunk-underline" style="background:${RC[ch.role]}"></div>
+        <div class="chunk-label" style="color:${RC[ch.role]}">${ch.role}</div>
+      </div>`;
+    }
+  }).join("");
+}
+
+/* ── SHARED RENDER ── */
+function renderSent(containerId, words, uaMap, selW, isDone){
+  document.getElementById(containerId).innerHTML=words.map((w,i)=>{
+    const r=uaMap[clean(w)]||"";
+    const isSel=selW&&selW.w===w&&selW.i===i;
+    return `<div class="wb${isSel?" sel":isDone?" done-sel":""}" id="${containerId}_wb${i}" onclick="${containerId==="pSent"?"pSelW":"tSelW"}('${w.replace(/'/g,"\\'")}',${i})">
+      <div class="wt">${w}</div>
+      <div class="wl-wrap"><div class="wl${r?" show":""}" id="${containerId}_wl${i}" style="${r?`background:${RC[r]};color:${RT[r]}`:"background:transparent"}">${r||"·"}</div></div>
+    </div>`;
+  }).join("");
+}
+
+function renderRoleBtns(containerId, roles, selW, isDone){
+  const off=!selW||isDone;
+  document.getElementById(containerId).innerHTML=
+    roles.map(r=>`<button class="rb${off?" off":""}" onclick="${containerId==="pRoles"?"pApply":"tApply"}('${r}')" style="background:${RC[r]};color:${RT[r]}">${r}</button>`).join("")+
+    `<button class="rb erase${off?" off":""}" onclick="${containerId==="pRoles"?"pErase":"tErase"}()">지우기</button>`;
+}
+
+function showFb(fbId, correct, q, errList){
+  const fb=document.getElementById(fbId);
+  fb.style.display="block";
+  const ansHTML=buildAnsHTML(q);
+  if(correct){
+    fb.innerHTML=`<div class="fb-top" style="background:rgba(123,237,159,.1);border:1px solid rgba(123,237,159,.25);border-radius:14px 14px 0 0">
+      <div class="fb-icon" style="background:#7bed9f;color:#000">✓</div>
+      <div class="fb-msg" style="color:#7bed9f;font-weight:700">정답!</div></div>
+      <div class="ans-box"><div class="ans-lbl">문장 구조</div><div class="ans-sent">${ansHTML}</div><div class="tr-line">${q.tr}</div></div>`;
+  } else {
+    const errMsg=errList.map(x=>`<b style="color:var(--w)">${x.w}</b>: <span style="color:var(--red)">${x.given||"미선택"}</span>→<span style="font-weight:700;color:${RC[x.exp]}">${x.exp}</span>`).join(" · ");
+    fb.innerHTML=`<div class="fb-top" style="background:rgba(230,57,70,.08);border:1px solid rgba(230,57,70,.25);border-radius:14px 14px 0 0">
+      <div class="fb-icon" style="background:var(--red);color:#fff">✗</div>
+      <div class="fb-msg">${errMsg}</div></div>
+      <div class="ans-box"><div class="ans-lbl">정답 구조</div><div class="ans-sent">${ansHTML}</div><div class="tr-line">${q.tr}</div></div>`;
+  }
+}
+
+/* ════════ PRACTICE ════════ */
+function startPractice(){mode="practice";cf=0;cq=0;sel=null;ua={};done=false;show("practice");renderTabs();renderPCard();}
+
+function renderTabs(){
+  document.getElementById("formTabs").innerHTML=forms.map((f,i)=>
+    `<button class="tab${i===cf?" active":""}" onclick="pSwitchForm(${i})">${f}</button>`).join("");
+}
+function pSwitchForm(i){cf=i;cq=0;sel=null;ua={};done=false;renderTabs();renderPCard();}
+
+function renderPCard(){
+  done=false;sel=null;ua={};
+  const f=forms[cf],qs=DATA[f].qs,q=qs[cq],n=qs.length;
+  document.getElementById("pProg").textContent=`${cq+1} / ${n}`;
+  document.getElementById("pFormScore").textContent=`${pSc[f]}점`;
+  document.getElementById("pScore").textContent=`전체 ${forms.reduce((a,f)=>a+pSc[f],0)}점`;
+  document.getElementById("pFill").style.width=`${(cq/n)*100}%`;
+  document.getElementById("pMeta").textContent=`${f} · ${String(cq+1).padStart(2,"0")}`;
+  const words=q.s.split(" ");
+  renderSent("pSent",words,ua,sel,done);
+  renderRoleBtns("pRoles",DATA[f].roles,sel,done);
+  document.getElementById("pHint").textContent="단어를 먼저 선택하세요";
+  document.getElementById("pHint").classList.remove("active");
+  document.getElementById("pFb").style.display="none";
+  document.getElementById("pFb").innerHTML="";
+  document.getElementById("pCheck").style.display="block";
+  document.getElementById("pNext").style.display="none";
+}
+
+function pSelW(w,i){
+  if(done)return;
+  sel={w,i};
+  document.querySelectorAll("#pSent .wb").forEach(e=>e.classList.remove("sel"));
+  document.getElementById("pSent_wb"+i).classList.add("sel");
+  document.getElementById("pHint").textContent=`"${w}" 의 성분을 선택하세요`;
+  document.getElementById("pHint").classList.add("active");
+  renderRoleBtns("pRoles",DATA[forms[cf]].roles,sel,done);
+}
+function pApply(r){if(!sel||done)return;ua[clean(sel.w)]=r;const l=document.getElementById("pSent_wl"+sel.i);l.textContent=r;l.style.background=RC[r];l.style.color=RT[r];l.classList.add("show");}
+function pErase(){if(!sel||done)return;delete ua[clean(sel.w)];const l=document.getElementById("pSent_wl"+sel.i);l.textContent="·";l.style.background="transparent";l.style.color="transparent";l.classList.remove("show");}
+
+function practiceCheck(){
+  const f=forms[cf],q=DATA[f].qs[cq];
+  let wrong=[],ok=true;
+  Object.entries(q.ans).forEach(([w,exp])=>{if((ua[w]||"")!==exp){wrong.push({w,exp,given:ua[w]||""});ok=false;}});
+  done=true;pTot[f]++;
+  if(ok)pSc[f]++;
+  document.getElementById("pScore").textContent=`전체 ${forms.reduce((a,f)=>a+pSc[f],0)}점`;
+  // mark wrong in sentence
+  wrong.forEach(({w})=>{const words=q.s.split(" ");words.forEach((wd,i)=>{if(clean(wd)===w){const l=document.getElementById("pSent_wl"+i);l.style.background="#e63946";l.style.color="#fff";l.textContent=ua[w]||"?";l.classList.add("show");}});});
+  showFb("pFb",ok,q,wrong);
+  renderRoleBtns("pRoles",DATA[f].roles,sel,done);
+  document.getElementById("pCheck").style.display="none";
+  document.getElementById("pNext").style.display="block";
+  const tot=DATA[f].qs.length;
+  document.getElementById("pNext").textContent=cq>=tot-1?"결과 보기 →":"다음 →";
+}
+function practiceNext(){
+  const f=forms[cf],tot=DATA[f].qs.length;
+  if(cq>=tot-1){showPracticeResult();return;}
+  cq++;renderPCard();
+}
+function showPracticeResult(){
+  const weakF=forms.filter(f=>pTot[f]>0&&pSc[f]/pTot[f]<0.7);
+  showResult("연습 모드 완료",pSc,pTot,weakF,()=>{startPractice();});
+}
+
+/* ════════ TEST ════════ */
+function startTest(){
+  mode="test";tIdx=0;tSc=0;tDone=false;tSel=null;tUa={};
+  // pick 5 per form
+  testQs=[];
+  forms.forEach(f=>{
+    const pool=TEST_POOL[f];
+    const allQs=DATA[f].qs;
+    const picked=shuffle(pool).slice(0,5);
+    picked.forEach(s=>{
+      const q=allQs.find(q=>q.s===s);
+      if(q) testQs.push({...q,form:f});
+    });
+  });
+  testQs=shuffle(testQs);
+  show("test");renderTCard();
+}
+
+const ALL_ROLES=["S","V","O","C","IO","DO","OC"];
+
+function renderTCard(){
+  tDone=false;tSel=null;tUa={};
+  const q=testQs[tIdx];
+  document.getElementById("tProg").textContent=`${tIdx+1} / 25`;
+  document.getElementById("tPct").textContent=`${tSc}점`;
+  document.getElementById("tScore").textContent=`${tSc}점`;
+  document.getElementById("tFill").style.width=`${(tIdx/25)*100}%`;
+  document.getElementById("tMeta").innerHTML=`<span class="form-badge">실전 테스트</span>`;
+  const words=q.s.split(" ");
+  renderSent("tSent",words,tUa,tSel,tDone);
+  renderRoleBtns("tRoles",ALL_ROLES,tSel,tDone);
+  document.getElementById("tHint").textContent="단어를 먼저 선택하세요";
+  document.getElementById("tHint").classList.remove("active");
+  document.getElementById("tFb").style.display="none";
+  document.getElementById("tFb").innerHTML="";
+  document.getElementById("tCheck").style.display="block";
+  document.getElementById("tNext").style.display="none";
+}
+
+function tSelW(w,i){
+  if(tDone)return;
+  tSel={w,i};
+  document.querySelectorAll("#tSent .wb").forEach(e=>e.classList.remove("sel"));
+  document.getElementById("tSent_wb"+i).classList.add("sel");
+  document.getElementById("tHint").textContent=`"${w}" 의 성분을 선택하세요`;
+  document.getElementById("tHint").classList.add("active");
+  renderRoleBtns("tRoles",ALL_ROLES,tSel,tDone);
+}
+function tApply(r){if(!tSel||tDone)return;tUa[clean(tSel.w)]=r;const l=document.getElementById("tSent_wl"+tSel.i);l.textContent=r;l.style.background=RC[r];l.style.color=RT[r];l.classList.add("show");}
+function tErase(){if(!tSel||tDone)return;delete tUa[clean(tSel.w)];const l=document.getElementById("tSent_wl"+tSel.i);l.textContent="·";l.style.background="transparent";l.style.color="transparent";l.classList.remove("show");}
+
+function testCheck(){
+  const q=testQs[tIdx];
+  let wrong=[],ok=true;
+  Object.entries(q.ans).forEach(([w,exp])=>{if((tUa[w]||"")!==exp){wrong.push({w,exp,given:tUa[w]||""});ok=false;}});
+  tDone=true;
+  if(ok)tSc++;
+  document.getElementById("tScore").textContent=`${tSc}점`;
+  wrong.forEach(({w})=>{const words=q.s.split(" ");words.forEach((wd,i)=>{if(clean(wd)===w){const l=document.getElementById("tSent_wl"+i);l.style.background="#e63946";l.style.color="#fff";l.textContent=tUa[w]||"?";l.classList.add("show");}});});
+  showFb("tFb",ok,q,wrong);
+  renderRoleBtns("tRoles",ALL_ROLES,tSel,tDone);
+  document.getElementById("tCheck").style.display="none";
+  document.getElementById("tNext").style.display="block";
+  document.getElementById("tNext").textContent=tIdx>=24?"결과 보기 →":"다음 →";
+}
+function testNext(){
+  if(tIdx>=24){showTestResult();return;}
+  tIdx++;renderTCard();
+}
+function showTestResult(){
+  // per-form score
+  const fSc={},fTot={};
+  forms.forEach(f=>{fSc[f]=0;fTot[f]=0;});
+  testQs.forEach((q,i)=>{/* can't recover per-q result here, approximate */});
+  const weakF=[];
+  showResult("실전 테스트 완료",{총점:tSc},{총점:25},weakF,()=>{startTest();},true);
+}
+
+/* ════════ RESULT ════════ */
+let flashList=[],fi=0,fr=false;
+
+function showResult(subtitle,scMap,totMap,weakF,retryCb,isTest=false){
+  show("result");
+  document.getElementById("resMode").textContent=subtitle;
+  const aS=Object.values(scMap).reduce((a,v)=>a+v,0);
+  const aT=Object.values(totMap).reduce((a,v)=>a+v,0);
+  let verbs=[];
+  weakF.forEach(f=>{if(WEAK[f])verbs.push(...WEAK[f].map(v=>({...v,form:f})));});
+  if(!verbs.length&&!isTest) verbs=WEAK["4형식"].map(v=>({...v,form:"4형식"}));
+  flashList=verbs;fi=0;fr=false;
+
+  const scCards=Object.entries(scMap).filter(([f])=>totMap[f]>0).map(([f,s])=>`
+    <div class="sc-card"><div class="sc-lbl">${f}</div><div class="sc-val ${s/totMap[f]>=.7?"good":"bad"}">${s}/${totMap[f]}</div></div>`).join("");
+
+  document.getElementById("resContent").innerHTML=`
+    <div class="sc-grid">
+      <div class="sc-card"><div class="sc-lbl">총 정답</div><div class="sc-val ${aT&&aS/aT>=.7?"good":"bad"}">${aS}/${aT}</div></div>
+      <div class="sc-card"><div class="sc-lbl">정답률</div><div class="sc-val ${aT&&aS/aT>=.7?"good":"bad"}">${aT?Math.round(aS/aT*100):0}%</div></div>
+      ${scCards}
+    </div>
+    ${weakF.length?`
+    <div class="weak-box">
+      <div class="weak-ttl">약한 형식 — ${weakF.join(", ")}</div>
+      ${verbs.map(v=>`<div class="vrow"><div class="vform">${v.form}</div><div><div class="vwords">${v.word}</div><div class="vdesc">${v.desc}</div></div></div>`).join("")}
+    </div>`:""}
+    ${verbs.length?`
+    <div class="flash-box">
+      <div class="flash-ttl">암기 플래시카드</div>
+      <div class="flashcard" id="fcard" onclick="toggleF()">
+        <div class="fw" id="fw">${verbs[0].word}</div>
+        <div class="fhint" id="fhint">탭해서 확인</div>
+        <div class="fans" id="fans">${verbs[0].desc}</div>
+      </div>
+      <div class="fnav">
+        <button onclick="prevF()">← 이전</button>
+        <span id="fcnt">1/${verbs.length}</span>
+        <button onclick="nextF()">다음 →</button>
+      </div>
+    </div>`:""}
+    <button class="btn-home" onclick="goHome()">홈으로</button>
+    <button class="btn-retry" onclick="(${retryCb.toString()})()">다시 풀기</button>`;
+}
+
+function toggleF(){fr=!fr;document.getElementById("fans").style.display=fr?"block":"none";document.getElementById("fhint").style.display=fr?"none":"block";}
+function prevF(){fi=Math.max(0,fi-1);uf();}
+function nextF(){fi=Math.min(flashList.length-1,fi+1);uf();}
+function uf(){fr=false;const v=flashList[fi];document.getElementById("fw").textContent=v.word;document.getElementById("fans").textContent=v.desc;document.getElementById("fans").style.display="none";document.getElementById("fhint").style.display="block";document.getElementById("fcnt").textContent=`${fi+1}/${flashList.length}`;}
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+</script>
+</body>
+</html>
